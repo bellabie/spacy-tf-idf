@@ -1,10 +1,15 @@
 import spacy
 nlp = spacy.load("en_core_web_sm")
 from collections import Counter
+from spacy.lang.en.stop_words import STOP_WORDS
+#print(STOP_WORDS)
 
 #Need to connect to files, Excel or csv would probably be user friendlier
 
-phrase = nlp(u"Job wise I think you'd excel at user or topical research, design, project management, evangelism/marketing/brand roles, or anything involving speaking, storytelling, or presentation. If you want to do something really different, maybe graphic art or story boarding. I'm probably not the best person to ask on education or training, but continue to surround yourself with engaging people who support you and encourage you to challenge yourself, grow, and reflect.")
+source = open("BestPractest.txt","r")
+text = source.read()
+
+phrase = nlp(text)
 
 
 words = [token.lemma_ for token in phrase]
@@ -25,7 +30,6 @@ while i<len(word_list):
 	pass
 
 
-
 #for token in test:
 #	lemmalist[token] = token.lemma_
 #	print(lemmalist)
@@ -33,7 +37,3 @@ while i<len(word_list):
 #comments = nlp(u"")
 
 # tfidf = (count of text / all the text in the document) * natural? log of (document count / documents containing that text)
-
-
-
-#shiny
