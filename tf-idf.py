@@ -2,36 +2,53 @@ import spacy
 nlp = spacy.load("en_core_web_sm")
 from collections import Counter
 from spacy.lang.en.stop_words import STOP_WORDS
+#Change to spacy/lang/lex_attrs.py was made to fix capitalization issue
+#More info here: https://github.com/explosion/spaCy/pull/1891/files
+nlp.vocab["s"].is_stop = True
+#Adding s to the list of stop words
 #print(STOP_WORDS) #if you want to see what they are
 
-#Need to connect to files, Excel or csv would probably be user friendlier
+#Excel or csv files would probably be user friendlier
 
-source = open("goodAtStuff.txt","r")
+file = "goodAtStuff.txt"
+print(file)
+source = open(file,"r")
 text = source.read()
 source.close()
 
-#Swaps line breaks for spaces
-text = text.replace("\n", " ")
+#Swaps line breaks for spaces, also remove apostrophes & single quotes
+text = text.replace("\n", " ").replace("'","").replace("’","")
+#"Be" stop words weren't caught before lemmatization with the apostrophe
+text = text.lower()
+#spaCy is_stop was not working on words with capitalized letters
+text = nlp(text)
+#print(phrase) #Print before cleansing to
 
-phrase = nlp(text)
+#Returns lemmatized text without stop words, punctuation, & white space characters
+words = [token.lemma_ for token in text if not (token.is_stop or token.is_punct or token.is_space)]
 
-#Returns lemmatized text without stop words, punctuation, and white space characters
-words = [token.lemma_ for token in phrase if not (token.is_stop or token.is_punct or token.is_space)]
+#print(words) #Print after cleansing to debug
 
 #Create a list of all the lemmatized tokens (words)
-word_freq = Counter(words)
-word_list = list(word_freq.items()) 
+word_count = Counter(words)
+word_list = list(word_count.items()) 
 word_list.sort(key=lambda tup: tup[1], reverse=True) #list sorted by frequency
 
 #Total number of lemmatized tokens in the phrase
-print(len(word_list))
+totalunique = len(word_list)
 
-#Prints each word and its count on a new line
+#Now we'll do some math to find the relative frequency of each word within this text
+word_freq = list()
 i=0
 while i<len(word_list):
-	print(word_list[i])
+	word, count = word_list[i]
+	count = count/totalunique
+	word_freq.append((word, count))
+	print(word_freq[i])
 	i=i+1
 	pass
+
+
 
 
 #comments = nlp(u"")
