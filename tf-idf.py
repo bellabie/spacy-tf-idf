@@ -2,6 +2,7 @@ import spacy
 nlp = spacy.load("en_core_web_sm")
 from collections import Counter
 from spacy.lang.en.stop_words import STOP_WORDS
+import csv
 #Change to spacy/lang/lex_attrs.py was made to fix capitalization issue
 #More info here: https://github.com/explosion/spaCy/pull/1891/files
 nlp.vocab["s"].is_stop = True
@@ -10,7 +11,7 @@ nlp.vocab["s"].is_stop = True
 
 #Excel or csv files would probably be user friendlier
 
-file = "goodAtStuff.txt"
+file = "shouldAvoid.txt"
 print(file)
 source = open(file,"r")
 text = source.read()
@@ -22,7 +23,7 @@ text = text.replace("\n", " ").replace("'","").replace("’","")
 text = text.lower()
 #spaCy is_stop was not working on words with capitalized letters
 text = nlp(text)
-#print(phrase) #Print before cleansing to
+#print(text) #Print before cleansing to debug
 
 #Returns lemmatized text without stop words, punctuation, & white space characters
 words = [token.lemma_ for token in text if not (token.is_stop or token.is_punct or token.is_space)]
@@ -37,10 +38,10 @@ word_list.sort(key=lambda tup: tup[1], reverse=True) #list sorted by frequency
 #Total number of lemmatized tokens in the phrase
 totalunique = len(word_list)
 
-#Now we'll do some math to find the relative frequency of each word within this text
+#Now we'll do some math to find the relative frequency of each word in our text
 word_freq = list()
-i=0
-while i<len(word_list):
+
+for i in range(totalunique):
 	word, count = word_list[i]
 	count = count/totalunique
 	word_freq.append((word, count))
@@ -53,7 +54,7 @@ while i<len(word_list):
 
 #comments = nlp(u"")
 
-# tfidf = (count of text / all the text in the document) * natural? log of (document count / documents containing that text)
+# tfidf = (count of word / all the words in the document) * natural? log of (document count / documents containing that word)
 
 # NOTE: So far, I've been using:
 #* **spaCy version:** 2.0.11
